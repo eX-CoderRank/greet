@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Akshi 🎂</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Boogaloo&family=Fredoka+One&family=Righteous&family=Lilita+One&family=Pacifico&family=Russo+One&display=swap');
+:root{--gold:#FFD700;--rose:#FF69B4;--deep:#050010;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--deep);overflow:hidden;width:100vw;height:100vh;font-family:'Fredoka One',cursive;}
+.scene{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;}
+.scene.active{display:flex;}
+#scene-snake{background:radial-gradient(ellipse at bottom,#120026 0%,#050010 70%);overflow:hidden;}
+.stars{position:absolute;inset:0;pointer-events:none;}
+.star{position:absolute;border-radius:50%;background:white;animation:twinkle 2s infinite alternate;}
+@keyframes twinkle{from{opacity:.2;transform:scale(1);}to{opacity:1;transform:scale(1.5);}}
+#snake-canvas{position:absolute;inset:0;width:100%;height:100%;}
+.ground{position:absolute;bottom:0;left:0;right:0;height:90px;background:linear-gradient(to top,#0f2e0f,#1a4a1a,#2d6a2d);border-top:3px solid #4CAF50;}
+.grass-blade{position:absolute;bottom:87px;width:5px;background:#4CAF50;border-radius:3px 3px 0 0;transform-origin:bottom;animation:sway 2s ease-in-out infinite alternate;}
+@keyframes sway{from{transform:rotate(-6deg);}to{transform:rotate(6deg);}}
+#heaven-overlay{position:fixed;inset:0;background:radial-gradient(circle,#fff 0%,#E0F7FF 40%,#87CEEB 100%);opacity:0;pointer-events:none;z-index:100;transition:opacity 1.2s;}
+#scene-cake{background:radial-gradient(ellipse at center,#fff8f0 0%,#fce4ec 50%,#f8bbd9 100%);overflow:hidden;}
+.clouds-bg{position:absolute;inset:0;pointer-events:none;}
+.cloud{position:absolute;background:white;border-radius:50px;animation:floatCloud linear infinite;filter:blur(1px);}
+.cloud::before,.cloud::after{content:'';position:absolute;background:white;border-radius:50%;}
+.cloud::before{width:60%;height:150%;top:-60%;left:10%;}
+.cloud::after{width:40%;height:120%;top:-40%;right:10%;}
+@keyframes floatCloud{from{transform:translateX(-250px);}to{transform:translateX(calc(100vw + 250px));}}
+#heaven-gate-anim{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:320px;height:420px;perspective:900px;display:none;}
+.gate-panel{position:absolute;top:0;width:50%;height:100%;background:linear-gradient(135deg,#FFD700,#FFA500,#FFEC6E,#FFD700);border:5px solid #B8860B;box-shadow:0 0 40px rgba(255,215,0,.9),inset 0 0 25px rgba(255,255,255,.4);transition:transform 1.8s cubic-bezier(.4,0,.2,1);}
+.gate-left{left:0;border-radius:24px 0 0 0;transform-origin:left center;}
+.gate-right{left:50%;border-radius:0 24px 0 0;transform-origin:right center;}
+.gate-left.open{transform:perspective(700px) rotateY(-125deg);}
+.gate-right.open{transform:perspective(700px) rotateY(125deg);}
+.cake-wrap{position:relative;opacity:0;transform:scale(0) translateY(60px);transition:all 1.3s cubic-bezier(.34,1.56,.64,1);filter:drop-shadow(0 25px 50px rgba(255,105,180,.7));}
+.cake-wrap.show{opacity:1;transform:scale(1) translateY(0);}
+.cake-svg{width:230px;height:270px;animation:floatCake 3s ease-in-out infinite;cursor:pointer;}
+@keyframes floatCake{0%,100%{transform:translateY(0) rotateZ(-1deg);}50%{transform:translateY(-18px) rotateZ(1deg);}}
+#foonk-text{position:absolute;top:6%;left:50%;transform:translateX(-50%) scale(0);font-family:'Lilita One',cursive;font-size:clamp(1.8rem,5.5vw,3.8rem);color:#fff;text-shadow:0 0 20px #FF6600,0 0 40px #FFD700,4px 4px 0 #FF0000,-2px -2px 0 #FF8C00;opacity:0;z-index:10;white-space:nowrap;letter-spacing:3px;cursor:pointer;}
+#foonk-text.boom{animation:foonkBoom .7s cubic-bezier(.34,1.56,.64,1) forwards;}
+@keyframes foonkBoom{0%{transform:translateX(-50%) scale(0) rotate(-12deg);opacity:0;}60%{transform:translateX(-50%) scale(1.35) rotate(4deg);opacity:1;}100%{transform:translateX(-50%) scale(1) rotate(0);opacity:1;}}
+.birthday-title{font-family:'Pacifico',cursive;font-size:clamp(1.3rem,4vw,2.5rem);text-align:center;background:linear-gradient(135deg,#FF69B4,#FFD700,#FF1493,#FFD700);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 2s linear infinite;opacity:0;transform:translateY(35px);transition:all 1s ease .3s;filter:drop-shadow(0 4px 10px rgba(255,105,180,.6));padding:8px 20px;}
+.birthday-title.show{opacity:1;transform:translateY(0);}
+@keyframes shimmer{0%{background-position:0% 50%;}100%{background-position:300% 50%;}}
+.next-btn{margin-top:18px;padding:15px 45px;background:linear-gradient(135deg,#FF69B4,#FF1493);border:none;border-radius:50px;color:white;font-family:'Fredoka One',cursive;font-size:1.4rem;cursor:pointer;opacity:0;transform:translateY(25px);transition:all .8s ease 1s,box-shadow .3s;box-shadow:0 8px 30px rgba(255,105,180,.6);letter-spacing:1px;}
+.next-btn.show{opacity:1;transform:translateY(0);}
+.next-btn:hover{box-shadow:0 15px 40px rgba(255,105,180,.9);transform:translateY(-4px) scale(1.06);transition:all .3s;}
+.sparkle{position:absolute;pointer-events:none;animation:sparkleFloat 4s ease-in-out forwards;font-size:1.6rem;}
+@keyframes sparkleFloat{0%{transform:translateY(0) rotate(0) scale(1);opacity:1;}100%{transform:translateY(-150px) rotate(360deg) scale(0);opacity:0;}}
+#mini-snake-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.blow-hint{position:absolute;bottom:12%;left:50%;transform:translateX(-50%);font-family:'Boogaloo',cursive;font-size:1rem;color:rgba(255,150,100,.8);animation:pulseHint 1.5s ease-in-out infinite;pointer-events:none;}
+@keyframes pulseHint{0%,100%{opacity:.5;}50%{opacity:1;}}
+#scene-gates{background:radial-gradient(ellipse at top,#1a0033 0%,#050010 100%);overflow:hidden;}
+#gates-snake-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+.gates-title{font-family:'Russo One',sans-serif;font-size:clamp(.95rem,2.8vw,1.9rem);color:var(--gold);text-align:center;margin-bottom:22px;text-shadow:0 0 25px rgba(255,215,0,.9),0 0 50px rgba(255,165,0,.5);letter-spacing:2px;z-index:1;}
+.gates-row{display:flex;gap:clamp(10px,2.5vw,32px);align-items:flex-start;justify-content:center;flex-wrap:wrap;padding:0 14px;z-index:1;}
+.gate-card{width:clamp(148px,21vw,205px);cursor:pointer;transition:transform .3s;}
+.gate-card:hover{transform:translateY(-10px) scale(1.03);}
+.gate-3d-wrap{perspective:700px;width:100%;height:clamp(185px,27vw,262px);position:relative;margin-bottom:11px;}
+.gate-3d{width:100%;height:100%;position:relative;transform-style:preserve-3d;animation:gateFloat3d 3.5s ease-in-out infinite;}
+.gate-card:nth-child(2) .gate-3d{animation-delay:-1.2s;}
+.gate-card:nth-child(3) .gate-3d{animation-delay:-2.4s;}
+@keyframes gateFloat3d{0%,100%{transform:translateY(0) rotateY(-4deg) rotateX(2deg);}50%{transform:translateY(-10px) rotateY(4deg) rotateX(-2deg);}}
+.gate-svg{width:100%;height:100%;filter:drop-shadow(0 10px 22px rgba(0,0,0,.55));}
+.gate-card.unlocked .gate-3d{animation:unlockedPulse 1.2s ease-in-out infinite;}
+@keyframes unlockedPulse{0%,100%{filter:drop-shadow(0 0 20px rgba(255,215,0,.8));}50%{filter:drop-shadow(0 0 50px rgba(255,215,0,1)) drop-shadow(0 0 70px rgba(255,165,0,.7));}}
+.gate-label{font-family:'Righteous',cursive;font-size:clamp(.82rem,1.5vw,1rem);color:var(--gold);text-align:center;margin-bottom:5px;text-shadow:0 0 12px rgba(255,215,0,.7);letter-spacing:1px;}
+.hint-text{font-family:'Boogaloo',cursive;font-size:clamp(.78rem,1.4vw,.98rem);color:#FFB6C1;text-align:center;margin-bottom:9px;font-style:italic;text-shadow:0 0 8px rgba(255,182,193,.5);}
+.password-input-wrap{display:flex;gap:6px;justify-content:center;}
+.password-input{width:98px;padding:9px 11px;border-radius:25px;border:2px solid var(--gold);background:rgba(255,255,255,.1);color:white;font-family:'Fredoka One',cursive;font-size:.92rem;text-align:center;outline:none;transition:border-color .3s,box-shadow .3s;}
+.password-input:focus{border-color:#FF69B4;box-shadow:0 0 18px rgba(255,105,180,.6);}
+.password-input.wrong{border-color:#ff4444;animation:shake .4s ease;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-9px);}75%{transform:translateX(9px);}}
+.enter-btn{padding:9px 17px;background:linear-gradient(135deg,var(--gold),#FFA500);border:none;border-radius:25px;color:#000;font-family:'Fredoka One',cursive;cursor:pointer;font-size:.88rem;transition:transform .2s,box-shadow .2s;}
+.enter-btn:hover{transform:scale(1.12);box-shadow:0 5px 18px rgba(255,215,0,.7);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
+.modal-overlay.open{display:flex;}
+.modal-box{background:linear-gradient(135deg,#1a0033,#2d0050);border:2px solid var(--gold);border-radius:22px;padding:36px;max-width:560px;width:100%;box-shadow:0 0 60px rgba(255,215,0,.4),0 0 100px rgba(255,105,180,.2);animation:modalIn .5s cubic-bezier(.34,1.56,.64,1);position:relative;max-height:85vh;overflow-y:auto;}
+@keyframes modalIn{from{transform:scale(.4) rotate(-8deg);opacity:0;}to{transform:scale(1) rotate(0);opacity:1;}}
+.modal-close{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--gold);font-size:2rem;cursor:pointer;transition:transform .2s;line-height:1;}
+.modal-close:hover{transform:rotate(90deg) scale(1.3);}
+.modal-title{font-family:'Lilita One',cursive;font-size:1.5rem;color:var(--gold);text-align:center;margin-bottom:18px;text-shadow:0 0 18px rgba(255,215,0,.7);}
+.modal-text{font-family:'Boogaloo',cursive;font-size:1.2rem;color:#FFE4E1;line-height:1.9;text-align:center;}
+.modal-text p{margin-bottom:14px;}
+.modal-emoji{font-size:2.2rem;display:block;text-align:center;margin:10px 0;}
+.modal-box::-webkit-scrollbar{width:5px;}
+.modal-box::-webkit-scrollbar-thumb{background:var(--gold);border-radius:5px;}
+.confetti-piece{position:fixed;top:-12px;pointer-events:none;z-index:300;animation:confettiFall linear forwards;border-radius:2px;}
+@keyframes confettiFall{to{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+.scene-transition{position:fixed;inset:0;background:white;z-index:150;opacity:0;pointer-events:none;transition:opacity .5s;}
+.scene-transition.flash{opacity:1;}
+@keyframes particlePuff{0%{transform:scale(1);opacity:.6;}100%{transform:scale(3) translateY(-40px);opacity:0;}}
+@keyframes smokeRise{0%{transform:translateY(0) scale(1);opacity:.5;}100%{transform:translateY(-90px) scale(2.5);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="scene-transition" id="transition"></div>
+<div id="heaven-overlay"></div>
+
+<!-- SCENE 1: SNAKE + MONGOOSE -->
+<div class="scene active" id="scene-snake">
+  <div class="stars" id="stars"></div>
+  <canvas id="snake-canvas"></canvas>
+  <div class="ground" id="ground"></div>
+</div>
+
+<!-- SCENE 2: CAKE -->
+<div class="scene" id="scene-cake">
+  <canvas id="mini-snake-canvas"></canvas>
+  <div class="clouds-bg" id="clouds"></div>
+  <div id="heaven-gate-anim">
+    <div class="gate-panel gate-left" id="gate-left-anim"></div>
+    <div class="gate-panel gate-right" id="gate-right-anim"></div>
+  </div>
+  <div id="foonk-text">💨 FOONK MAAR!!! 🕯️</div>
+  <div class="cake-wrap" id="cake-wrap">
+    <svg class="cake-svg" id="cake-svg" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="100" cy="232" rx="72" ry="11" fill="rgba(0,0,0,.13)"/>
+      <ellipse cx="100" cy="200" rx="70" ry="13" fill="#c06080"/>
+      <rect x="30" y="155" width="140" height="48" rx="7" fill="#FF69B4"/>
+      <ellipse cx="100" cy="155" rx="70" ry="13" fill="#FF85C2"/>
+      <path d="M38 155 Q44 167 50 155 Q56 169 62 155 Q68 167 74 155 Q80 169 86 155 Q92 167 98 155 Q104 169 110 155 Q116 167 122 155 Q128 169 134 155 Q140 167 146 155 Q152 169 158 155 Q164 167 162 155" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="100" cy="147" rx="52" ry="10" fill="#b04070"/>
+      <rect x="48" y="107" width="104" height="42" rx="6" fill="#FF1493"/>
+      <ellipse cx="100" cy="107" rx="52" ry="10" fill="#FF3AA6"/>
+      <circle cx="68" cy="131" r="6" fill="white" opacity=".7"/>
+      <circle cx="100" cy="131" r="6" fill="white" opacity=".7"/>
+      <circle cx="132" cy="131" r="6" fill="white" opacity=".7"/>
+      <ellipse cx="100" cy="100" rx="34" ry="8" fill="#900040"/>
+      <rect x="66" y="66" width="68" height="36" rx="6" fill="#CC0066"/>
+      <ellipse cx="100" cy="66" rx="34" ry="8" fill="#DD0077"/>
+      <rect id="c1" x="78" y="46" width="9" height="22" rx="2.5" fill="#FFD700"/>
+      <rect id="c2" x="95" y="41" width="9" height="27" rx="2.5" fill="#FF6B6B"/>
+      <rect id="c3" x="112" y="46" width="9" height="22" rx="2.5" fill="#98FB98"/>
+      <g id="flame1"><ellipse cx="82.5" cy="43" rx="5" ry="7.5" fill="#FF6600" opacity=".95"/><ellipse cx="82.5" cy="43" rx="2.8" ry="4.5" fill="#FFD700"/><ellipse cx="82.5" cy="43" rx="1.2" ry="2" fill="white" opacity=".7"/></g>
+      <g id="flame2"><ellipse cx="99.5" cy="38" rx="5" ry="7.5" fill="#FF6600" opacity=".95"/><ellipse cx="99.5" cy="38" rx="2.8" ry="4.5" fill="#FFD700"/><ellipse cx="99.5" cy="38" rx="1.2" ry="2" fill="white" opacity=".7"/></g>
+      <g id="flame3"><ellipse cx="116.5" cy="43" rx="5" ry="7.5" fill="#FF6600" opacity=".95"/><ellipse cx="116.5" cy="43" rx="2.8" ry="4.5" fill="#FFD700"/><ellipse cx="116.5" cy="43" rx="1.2" ry="2" fill="white" opacity=".7"/></g>
+      <text x="40" y="185" font-size="15" fill="white" opacity=".8">★</text>
+      <text x="152" y="185" font-size="15" fill="white" opacity=".8">★</text>
+      <text x="58" y="135" font-size="11" fill="white" opacity=".7">♥</text>
+      <text x="133" y="135" font-size="11" fill="white" opacity=".7">♥</text>
+    </svg>
+  </div>
+  <div class="blow-hint" id="blow-hint">👆 Tap the cake or "FOONK MAAR" to blow candles!</div>
+  <div class="birthday-title" id="bday-title">🎉 Happy Birthday Akshi 🎉</div>
+  <button class="next-btn" id="next-btn" onclick="goToGates()">Enter the Gates 🚪</button>
+</div>
+
+<!-- SCENE 3: THREE GATES -->
+<div class="scene" id="scene-gates">
+  <canvas id="gates-snake-canvas"></canvas>
+  <div class="gates-title">🔮 Three Mystical Gates 🔮</div>
+  <div class="gates-row">
+    <div class="gate-card" id="gate-card-1">
+      <div class="gate-3d-wrap"><div class="gate-3d">
+        <svg class="gate-svg" viewBox="0 0 160 245" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="gf1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#4a3000"/><stop offset="50%" style="stop-color:#7a5200"/><stop offset="100%" style="stop-color:#3a2000"/></linearGradient>
+            <linearGradient id="fr1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#FFD700"/><stop offset="50%" style="stop-color:#FFFACD"/><stop offset="100%" style="stop-color:#FFD700"/></linearGradient>
+          </defs>
+          <rect x="14" y="26" width="140" height="212" rx="8" fill="#1a0800"/>
+          <rect x="10" y="22" width="140" height="212" rx="10" fill="url(#gf1)" stroke="url(#fr1)" stroke-width="4"/>
+          <path d="M24 205 L24 88 Q80 25 136 88 L136 205 Z" fill="#3d2800" stroke="#FFD700" stroke-width="2.5"/>
+          <rect x="31" y="101" width="43" height="99" rx="5" fill="#2a1500" stroke="#B8860B" stroke-width="1.5"/>
+          <rect x="35" y="108" width="35" height="42" rx="3" fill="#3a2200" stroke="#FFD700" stroke-width="1"/>
+          <rect x="35" y="155" width="35" height="38" rx="3" fill="#3a2200" stroke="#FFD700" stroke-width="1"/>
+          <rect x="86" y="101" width="43" height="99" rx="5" fill="#2a1500" stroke="#B8860B" stroke-width="1.5"/>
+          <rect x="90" y="108" width="35" height="42" rx="3" fill="#3a2200" stroke="#FFD700" stroke-width="1"/>
+          <rect x="90" y="155" width="35" height="38" rx="3" fill="#3a2200" stroke="#FFD700" stroke-width="1"/>
+          <rect x="78" y="101" width="5" height="99" fill="#B8860B"/>
+          <rect x="64" y="150" width="32" height="24" rx="5" fill="#8B6914" stroke="#FFD700" stroke-width="2"/>
+          <path d="M71 150 Q71 137 80 137 Q89 137 89 150" fill="none" stroke="#FFD700" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="80" cy="162" r="4.5" fill="#FFD700"/>
+          <circle cx="80" cy="55" r="8" fill="#FFD700" opacity=".6"/>
+          <circle cx="50" cy="72" r="5" fill="#FFD700" opacity=".5"/>
+          <circle cx="110" cy="72" r="5" fill="#FFD700" opacity=".5"/>
+          <text x="53" y="134" font-size="13" fill="#FFD700" text-anchor="middle">★</text>
+          <text x="108" y="134" font-size="13" fill="#FFD700" text-anchor="middle">★</text>
+          <rect x="35" y="218" width="90" height="13" rx="4" fill="#B8860B"/>
+          <text x="80" y="228" font-size="9" fill="#000" text-anchor="middle" font-family="serif" font-weight="bold">GATE  I</text>
+        </svg>
+      </div></div>
+      <div class="gate-label">Gate of Friendship</div>
+      <div class="hint-text">💫 What I'm yours?</div>
+      <div class="password-input-wrap">
+        <input class="password-input" type="text" placeholder="Enter..." id="pwd-1">
+        <button class="enter-btn" onclick="checkPassword(1)">→</button>
+      </div>
+    </div>
+
+    <div class="gate-card" id="gate-card-2">
+      <div class="gate-3d-wrap"><div class="gate-3d">
+        <svg class="gate-svg" viewBox="0 0 160 245" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="gf2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#001a30"/><stop offset="50%" style="stop-color:#003050"/><stop offset="100%" style="stop-color:#000e20"/></linearGradient>
+            <linearGradient id="fr2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#4FC3F7"/><stop offset="50%" style="stop-color:#B3E5FC"/><stop offset="100%" style="stop-color:#4FC3F7"/></linearGradient>
+          </defs>
+          <rect x="14" y="26" width="140" height="212" rx="8" fill="#000810"/>
+          <rect x="10" y="22" width="140" height="212" rx="10" fill="url(#gf2)" stroke="url(#fr2)" stroke-width="4"/>
+          <path d="M24 205 L24 88 Q80 25 136 88 L136 205 Z" fill="#002040" stroke="#4FC3F7" stroke-width="2.5"/>
+          <rect x="31" y="101" width="43" height="99" rx="5" fill="#001525" stroke="#00BFFF" stroke-width="1.5"/>
+          <rect x="35" y="108" width="35" height="42" rx="3" fill="#002035" stroke="#4FC3F7" stroke-width="1"/>
+          <rect x="35" y="155" width="35" height="38" rx="3" fill="#002035" stroke="#4FC3F7" stroke-width="1"/>
+          <rect x="86" y="101" width="43" height="99" rx="5" fill="#001525" stroke="#00BFFF" stroke-width="1.5"/>
+          <rect x="90" y="108" width="35" height="42" rx="3" fill="#002035" stroke="#4FC3F7" stroke-width="1"/>
+          <rect x="90" y="155" width="35" height="38" rx="3" fill="#002035" stroke="#4FC3F7" stroke-width="1"/>
+          <rect x="78" y="101" width="5" height="99" fill="#00BFFF"/>
+          <rect x="64" y="150" width="32" height="24" rx="5" fill="#005090" stroke="#4FC3F7" stroke-width="2"/>
+          <path d="M71 150 Q71 137 80 137 Q89 137 89 150" fill="none" stroke="#4FC3F7" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="80" cy="162" r="4.5" fill="#4FC3F7"/>
+          <circle cx="80" cy="55" r="8" fill="#4FC3F7" opacity=".6"/>
+          <circle cx="50" cy="72" r="5" fill="#4FC3F7" opacity=".5"/>
+          <circle cx="110" cy="72" r="5" fill="#4FC3F7" opacity=".5"/>
+          <text x="53" y="134" font-size="13" fill="#4FC3F7" text-anchor="middle">✦</text>
+          <text x="108" y="134" font-size="13" fill="#4FC3F7" text-anchor="middle">✦</text>
+          <rect x="35" y="218" width="90" height="13" rx="4" fill="#00BFFF"/>
+          <text x="80" y="228" font-size="9" fill="#000" text-anchor="middle" font-family="serif" font-weight="bold">GATE  II</text>
+        </svg>
+      </div></div>
+      <div class="gate-label">Gate of Memories</div>
+      <div class="hint-text">💫 Jyada kon Ladta hai?</div>
+      <div class="password-input-wrap">
+        <input class="password-input" type="text" placeholder="Enter..." id="pwd-2">
+        <button class="enter-btn" onclick="checkPassword(2)">→</button>
+      </div>
+    </div>
+
+    <div class="gate-card" id="gate-card-3">
+      <div class="gate-3d-wrap"><div class="gate-3d">
+        <svg class="gate-svg" viewBox="0 0 160 245" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="gf3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2a001a"/><stop offset="50%" style="stop-color:#4a002a"/><stop offset="100%" style="stop-color:#1a0010"/></linearGradient>
+            <linearGradient id="fr3" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#FF69B4"/><stop offset="50%" style="stop-color:#FFB6D9"/><stop offset="100%" style="stop-color:#FF69B4"/></linearGradient>
+          </defs>
+          <rect x="14" y="26" width="140" height="212" rx="8" fill="#100008"/>
+          <rect x="10" y="22" width="140" height="212" rx="10" fill="url(#gf3)" stroke="url(#fr3)" stroke-width="4"/>
+          <path d="M24 205 L24 88 Q80 25 136 88 L136 205 Z" fill="#38001a" stroke="#FF69B4" stroke-width="2.5"/>
+          <rect x="31" y="101" width="43" height="99" rx="5" fill="#2a001a" stroke="#FF69B4" stroke-width="1.5"/>
+          <rect x="35" y="108" width="35" height="42" rx="3" fill="#3a0025" stroke="#FF69B4" stroke-width="1"/>
+          <rect x="35" y="155" width="35" height="38" rx="3" fill="#3a0025" stroke="#FF69B4" stroke-width="1"/>
+          <rect x="86" y="101" width="43" height="99" rx="5" fill="#2a001a" stroke="#FF69B4" stroke-width="1.5"/>
+          <rect x="90" y="108" width="35" height="42" rx="3" fill="#3a0025" stroke="#FF69B4" stroke-width="1"/>
+          <rect x="90" y="155" width="35" height="38" rx="3" fill="#3a0025" stroke="#FF69B4" stroke-width="1"/>
+          <rect x="78" y="101" width="5" height="99" fill="#FF69B4"/>
+          <rect x="64" y="150" width="32" height="24" rx="5" fill="#700040" stroke="#FF69B4" stroke-width="2"/>
+          <path d="M71 150 Q71 137 80 137 Q89 137 89 150" fill="none" stroke="#FF69B4" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="80" cy="162" r="4.5" fill="#FF69B4"/>
+          <circle cx="80" cy="55" r="8" fill="#FF69B4" opacity=".6"/>
+          <circle cx="50" cy="72" r="5" fill="#FF69B4" opacity=".5"/>
+          <circle cx="110" cy="72" r="5" fill="#FF69B4" opacity=".5"/>
+          <text x="53" y="134" font-size="13" fill="#FF69B4" text-anchor="middle">♥</text>
+          <text x="108" y="134" font-size="13" fill="#FF69B4" text-anchor="middle">♥</text>
+          <rect x="35" y="218" width="90" height="13" rx="4" fill="#FF69B4"/>
+          <text x="80" y="228" font-size="9" fill="#000" text-anchor="middle" font-family="serif" font-weight="bold">GATE  III</text>
+        </svg>
+      </div></div>
+      <div class="gate-label">Gate of Bond</div>
+      <div class="hint-text">💫 Humari Dosti kb huyi thi?</div>
+      <div class="password-input-wrap">
+        <input class="password-input" type="text" placeholder="Enter..." id="pwd-3">
+        <button class="enter-btn" onclick="checkPassword(3)">→</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-text" id="modal-text"></div>
+  </div>
+</div>
+
+<script>
+// ---- HELPERS ----
+function lerp(a,b,t){return a+(b-a)*t;}
+
+// ---- STARS ----
+const starsDiv=document.getElementById('stars');
+for(let i=0;i<130;i++){
+  const s=document.createElement('div');s.className='star';
+  const sz=Math.random()*3+1;
+  s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*80}%;animation-delay:${Math.random()*3}s;animation-duration:${Math.random()*2+1.5}s;`;
+  starsDiv.appendChild(s);
+}
+
+// ---- GRASS ----
+const ground=document.getElementById('ground');
+for(let i=0;i<70;i++){
+  const b=document.createElement('div');b.className='grass-blade';
+  b.style.cssText=`left:${Math.random()*100}%;height:${Math.random()*16+7}px;animation-delay:${Math.random()*2}s;animation-duration:${Math.random()*1+1.5}s;`;
+  ground.appendChild(b);
+}
+
+// ---- CANVAS ----
+const canvas=document.getElementById('snake-canvas');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+const groundY=window.innerHeight-90;
+
+// ---- SNAKE STATE ----
+let snakeSegs=[];
+const NSEG=34;
+let snakeX=-160;
+let snakeFat=0;
+let phase='crawl';
+let time=0;
+let riseSpeed=0;
+let fatTimer=0;
+let eatFlash=0;
+
+for(let i=0;i<NSEG;i++) snakeSegs.push({x:snakeX-i*21,y:groundY-22});
+
+// Mongoose
+let mg={x:canvas.width+150,y:groundY-22,speed:0,leaving:false};
+
+// ---- DRAW SNAKE BODY ----
+function drawSnakeBody(segs,fat,alpha){
+  if(segs.length<2)return;
+  ctx.save();ctx.globalAlpha=alpha;
+  const thick=lerp(22,55,fat);
+  ctx.beginPath();
+  ctx.moveTo(segs[0].x,segs[0].y);
+  for(let i=1;i<segs.length;i++){
+    const mx=(segs[i-1].x+segs[i].x)/2,my=(segs[i-1].y+segs[i].y)/2;
+    ctx.quadraticCurveTo(segs[i-1].x,segs[i-1].y,mx,my);
+  }
+  const g=ctx.createLinearGradient(segs[0].x,segs[0].y-thick,segs[0].x,segs[0].y+thick);
+  g.addColorStop(0,'#81C784');g.addColorStop(.4,'#4CAF50');g.addColorStop(1,'#2E7D32');
+  ctx.strokeStyle=g;ctx.lineWidth=thick;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();
+  // highlight stripe
+  ctx.beginPath();
+  ctx.moveTo(segs[0].x,segs[0].y-thick*.28);
+  for(let i=1;i<segs.length;i++){
+    const mx=(segs[i-1].x+segs[i].x)/2,my=(segs[i-1].y+segs[i].y)/2-thick*.28;
+    ctx.quadraticCurveTo(segs[i-1].x,segs[i-1].y-thick*.28,mx,my);
+  }
+  ctx.strokeStyle='rgba(200,255,200,.22)';ctx.lineWidth=thick*.3;ctx.stroke();
+  // scale dots
+  for(let i=4;i<segs.length-2;i+=5){
+    ctx.beginPath();ctx.arc(segs[i].x,segs[i].y,thick*.3,0,Math.PI*2);
+    ctx.fillStyle='rgba(100,180,100,.2)';ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawSnakeHead(x,y,fat,alpha){
+  ctx.save();ctx.globalAlpha=alpha;
+  const hw=lerp(17,34,fat),hh=lerp(13,26,fat);
+  // shadow
+  ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(x+4,y+5,hw,hh,0,0,Math.PI*2);ctx.fill();
+  // head
+  const hg=ctx.createRadialGradient(x-hw*.3,y-hh*.3,1,x,y,hw);
+  hg.addColorStop(0,'#81C784');hg.addColorStop(1,'#1B5E20');
+  ctx.fillStyle=hg;ctx.beginPath();ctx.ellipse(x,y,hw,hh,0,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='#1B5E20';ctx.lineWidth=2;ctx.stroke();
+  if(fat>.3){
+    ctx.fillStyle='rgba(100,200,100,.3)';ctx.beginPath();ctx.ellipse(x,y-hh*.45,hw*.75,hh*.4,0,0,Math.PI*2);ctx.fill();
+  }
+  const ew=lerp(4,7.5,fat);
+  ctx.fillStyle='white';
+  ctx.beginPath();ctx.arc(x+hw*.44,y-hh*.38,ew,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(x-hw*.44,y-hh*.38,ew,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#111';
+  ctx.beginPath();ctx.arc(x+hw*.5,y-hh*.38,ew*.5,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(x-hw*.38,y-hh*.38,ew*.5,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='white';ctx.beginPath();ctx.arc(x+hw*.55,y-hh*.45,ew*.2,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='#E53935';ctx.lineWidth=2;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(x,y+hh*.85);ctx.lineTo(x,y+hh*1.45);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x,y+hh*1.45);ctx.lineTo(x-6,y+hh*2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x,y+hh*1.45);ctx.lineTo(x+6,y+hh*2);ctx.stroke();
+  ctx.restore();
+}
+
+function drawMongoose(x,y,facingLeft){
+  ctx.save();ctx.translate(x,y);
+  if(facingLeft){ctx.scale(-1,1);}
+  // shadow
+  ctx.fillStyle='rgba(0,0,0,.2)';ctx.beginPath();ctx.ellipse(0,16,32,7,0,0,Math.PI*2);ctx.fill();
+  // body
+  const bg=ctx.createRadialGradient(-5,-4,2,0,0,28);
+  bg.addColorStop(0,'#C8A060');bg.addColorStop(1,'#7a5010');
+  ctx.fillStyle=bg;ctx.beginPath();ctx.ellipse(0,0,30,15,-.08,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='#5a3a00';ctx.lineWidth=1.5;ctx.stroke();
+  // fur texture lines
+  ctx.strokeStyle='rgba(80,50,0,.2)';ctx.lineWidth=1;
+  for(let i=-20;i<22;i+=6){ctx.beginPath();ctx.moveTo(i,-14);ctx.lineTo(i+2,14);ctx.stroke();}
+  // head
+  const hg2=ctx.createRadialGradient(20,-3,2,22,0,15);
+  hg2.addColorStop(0,'#D4A870');hg2.addColorStop(1,'#9a6820');
+  ctx.fillStyle=hg2;ctx.beginPath();ctx.ellipse(24,0,15,11,0,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='#5a3a00';ctx.lineWidth=1.2;ctx.stroke();
+  // ear
+  ctx.fillStyle='#9a6820';ctx.beginPath();ctx.ellipse(28,-11,5,8,-.4,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#D4A870';ctx.beginPath();ctx.ellipse(28,-11,3,5,-.4,0,Math.PI*2);ctx.fill();
+  // eye
+  ctx.fillStyle='#1a0a00';ctx.beginPath();ctx.arc(30,-2,4,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.7)';ctx.beginPath();ctx.arc(32,-3.5,1.5,0,Math.PI*2);ctx.fill();
+  // nose
+  ctx.fillStyle='#2a1000';ctx.beginPath();ctx.ellipse(38,2,4.5,3,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#111';ctx.beginPath();ctx.arc(37,2,2,0,Math.PI*2);ctx.fill();
+  // legs
+  ctx.strokeStyle='#7a5010';ctx.lineWidth=3.5;ctx.lineCap='round';
+  [[-18,12],[-6,14],[8,13],[20,12]].forEach(([lx,ly])=>{ctx.beginPath();ctx.moveTo(lx,10);ctx.lineTo(lx+1,ly+4);ctx.stroke();});
+  // tail
+  ctx.strokeStyle='#9a6820';ctx.lineWidth=6;
+  ctx.beginPath();ctx.moveTo(-28,0);ctx.quadraticCurveTo(-48,-8,-52,-22);ctx.stroke();
+  ctx.strokeStyle='#C8A060';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(-28,0);ctx.quadraticCurveTo(-48,-8,-52,-22);ctx.stroke();
+  ctx.restore();
+}
+
+function updateSnakeFollow(){
+  for(let i=1;i<NSEG;i++){
+    const dx=snakeSegs[i-1].x-snakeSegs[i].x,dy=snakeSegs[i-1].y-snakeSegs[i].y;
+    if(Math.hypot(dx,dy)>21){snakeSegs[i].x+=dx*.42;snakeSegs[i].y+=dy*.42;}
+  }
+}
+
+function animMain(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  time++;
+
+  if(phase==='crawl'){
+    snakeX+=3.8;
+    snakeSegs[0].x=snakeX;
+    snakeSegs[0].y=groundY-22+Math.sin(time*.1)*9;
+    updateSnakeFollow();
+    drawSnakeBody(snakeSegs,0,1);
+    drawSnakeHead(snakeSegs[0].x,snakeSegs[0].y,0,1);
+    if(snakeX>canvas.width*.38&&snakeSegs[NSEG-1].x>-20){
+      phase='mongoose';mg.x=canvas.width+160;mg.speed=5;
+    }
+  }
+  else if(phase==='mongoose'){
+    snakeX+=1.8;
+    snakeSegs[0].x=snakeX;
+    snakeSegs[0].y=groundY-22+Math.sin(time*.1)*7;
+    updateSnakeFollow();
+    drawSnakeBody(snakeSegs,0,1);
+    drawSnakeHead(snakeSegs[0].x,snakeSegs[0].y,0,1);
+    mg.speed=Math.min(mg.speed+.15,14);
+    mg.x-=mg.speed;
+    const tail=snakeSegs[NSEG-1];
+    if(mg.x<tail.x+50){
+      eatFlash=20;phase='eating';fatTimer=0;
+    } else {
+      drawMongoose(mg.x,mg.y,true);
+    }
+  }
+  else if(phase==='eating'){
+    // Flash
+    if(eatFlash>0){
+      drawSnakeBody(snakeSegs,0,.5);
+      ctx.fillStyle=`rgba(255,200,50,${eatFlash/20*.6})`;ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.save();ctx.font='bold 40px serif';ctx.fillStyle='#FFD700';
+      ctx.fillText('NOM NOM! 🐾',mg.x-80,mg.y-40);ctx.restore();
+      drawMongoose(mg.x,mg.y,false);
+      eatFlash--;
+      if(eatFlash===0) phase='fat';
+    }
+  }
+  else if(phase==='fat'){
+    fatTimer++;
+    mg.x-=5;
+    snakeFat=Math.min(snakeFat+(1/80),1);
+    snakeSegs[0].x+=2;
+    snakeSegs[0].y=groundY-28+Math.sin(time*.06)*8;
+    updateSnakeFollow();
+    drawSnakeBody(snakeSegs,snakeFat,1);
+    drawSnakeHead(snakeSegs[0].x,snakeSegs[0].y,snakeFat,1);
+    if(mg.x>-250) drawMongoose(mg.x,mg.y,false);
+    // Sparkles around fat snake
+    if(time%6===0){
+      ctx.save();ctx.font='20px serif';
+      const bx=snakeSegs[0].x+Math.cos(time*.25)*70,by=snakeSegs[0].y+Math.sin(time*.25)*35-40;
+      ctx.fillText('✨',bx,by);
+      ctx.fillText('💫',snakeSegs[NSEG/2|0].x,snakeSegs[NSEG/2|0].y-30);
+      ctx.restore();
+    }
+    // Bouncy fat label
+    if(snakeFat>.5){
+      ctx.save();ctx.font='bold 22px "Fredoka One"';ctx.fillStyle='#FFD700';
+      ctx.textAlign='center';ctx.shadowColor='#FF6600';ctx.shadowBlur=10;
+      ctx.fillText('SO FAT! 🎉',snakeSegs[0].x,snakeSegs[0].y-60);ctx.restore();
+    }
+    if(fatTimer>100){phase='rise';riseSpeed=.5;}
+  }
+  else if(phase==='rise'){
+    riseSpeed=Math.min(riseSpeed+.1,11);
+    snakeSegs[0].y-=riseSpeed;
+    snakeSegs[0].x+=1.5;
+    updateSnakeFollow();
+    drawSnakeBody(snakeSegs,snakeFat,1);
+    drawSnakeHead(snakeSegs[0].x,snakeSegs[0].y,snakeFat,1);
+    const rg=ctx.createRadialGradient(snakeSegs[0].x,snakeSegs[0].y,0,snakeSegs[0].x,snakeSegs[0].y,110);
+    rg.addColorStop(0,`rgba(255,255,220,${.45*(riseSpeed/11)})`);rg.addColorStop(1,'transparent');
+    ctx.fillStyle=rg;ctx.beginPath();ctx.arc(snakeSegs[0].x,snakeSegs[0].y,110,0,Math.PI*2);ctx.fill();
+    if(snakeSegs[0].y<-80) triggerHeavenTransition();
+  }
+  if(phase!=='heavenFlash') requestAnimationFrame(animMain);
+}
+
+function triggerHeavenTransition(){
+  phase='heavenFlash';
+  const ov=document.getElementById('heaven-overlay');
+  ov.style.opacity='1';
+  setTimeout(()=>{
+    document.getElementById('scene-snake').style.display='none';
+    document.getElementById('scene-cake').classList.add('active');
+    startCakeScene();
+    setTimeout(()=>{ov.style.opacity='0';},700);
+  },1400);
+}
+
+setTimeout(()=>animMain(),400);
+
+// ---- CLOUDS ----
+const clds=document.getElementById('clouds');
+for(let i=0;i<7;i++){
+  const c=document.createElement('div');c.className='cloud';
+  const w=Math.random()*130+70;
+  c.style.cssText=`width:${w}px;height:${w*.4}px;top:${Math.random()*55}%;animation-duration:${Math.random()*18+22}s;animation-delay:-${Math.random()*30}s;opacity:${Math.random()*.3+.4};`;
+  clds.appendChild(c);
+}
+
+// ---- HAPPY BIRTHDAY MUSIC ----
+function playHappyBirthday(){
+  try{
+    const ac=new(window.AudioContext||window.webkitAudioContext)();
+    const melody=[
+      [261.63,.3],[261.63,.15],[293.66,.45],[261.63,.45],[349.23,.45],[329.63,.9],
+      [261.63,.3],[261.63,.15],[293.66,.45],[261.63,.45],[392,.45],[349.23,.9],
+      [261.63,.3],[261.63,.15],[523.25,.45],[440,.45],[349.23,.45],[329.63,.45],[293.66,.9],
+      [466.16,.3],[466.16,.15],[440,.45],[349.23,.45],[392,.45],[349.23,1.2]
+    ];
+    let t=ac.currentTime+.1;
+    melody.forEach(([freq,dur])=>{
+      // Main melody
+      const o=ac.createOscillator();const g=ac.createGain();
+      o.connect(g);g.connect(ac.destination);
+      o.type='sine';o.frequency.value=freq;
+      g.gain.setValueAtTime(.45,t);g.gain.exponentialRampToValueAtTime(.001,t+dur-.02);
+      o.start(t);o.stop(t+dur);
+      // Harmony (+fifth)
+      const o2=ac.createOscillator();const g2=ac.createGain();
+      o2.connect(g2);g2.connect(ac.destination);
+      o2.type='triangle';o2.frequency.value=freq*1.5;
+      g2.gain.setValueAtTime(.15,t);g2.gain.exponentialRampToValueAtTime(.001,t+dur-.02);
+      o2.start(t);o2.stop(t+dur);
+      // Bass
+      const o3=ac.createOscillator();const g3=ac.createGain();
+      o3.connect(g3);g3.connect(ac.destination);
+      o3.type='sine';o3.frequency.value=freq*.5;
+      g3.gain.setValueAtTime(.08,t);g3.gain.exponentialRampToValueAtTime(.001,t+dur-.05);
+      o3.start(t);o3.stop(t+dur);
+      t+=dur;
+    });
+  }catch(e){console.log('Audio error',e);}
+}
+
+// ---- CAKE SCENE ----
+let candlesBlown=false;
+function startCakeScene(){
+  const gate=document.getElementById('heaven-gate-anim');
+  gate.style.display='block';
+  setTimeout(()=>{
+    document.getElementById('gate-left-anim').classList.add('open');
+    document.getElementById('gate-right-anim').classList.add('open');
+  },300);
+  setTimeout(()=>{
+    gate.style.display='none';
+    document.getElementById('cake-wrap').classList.add('show');
+    startMiniSnake();
+    const ft=document.getElementById('foonk-text');
+    ft.classList.add('boom');
+    startCandleFlicker();
+  },2300);
+  setTimeout(()=>blowCandles(),8000); // auto blow
+  document.getElementById('cake-svg').addEventListener('click',blowCandles);
+  document.getElementById('foonk-text').addEventListener('click',blowCandles);
+}
+
+function startCandleFlicker(){
+  let ft=0;
+  const flicker=()=>{
+    ft++;
+    if(candlesBlown)return;
+    [[82.5,43],[99.5,38],[116.5,43]].forEach(([tx,ty],i)=>{
+      const el=document.getElementById(`flame${i+1}`);
+      if(el){
+        const s=1+Math.sin(ft*.22+i*1.4)*.18;
+        el.setAttribute('transform',`translate(${tx},${ty}) scale(${s}) translate(-${tx},-${ty})`);
+      }
+    });
+    requestAnimationFrame(flicker);
+  };
+  flicker();
+}
+
+function blowCandles(){
+  if(candlesBlown)return;
+  candlesBlown=true;
+  document.getElementById('blow-hint').style.display='none';
+  // Puff particles
+  for(let i=0;i<22;i++){
+    setTimeout(()=>{
+      const p=document.createElement('div');
+      p.style.cssText=`position:fixed;left:${35+Math.random()*30}%;top:${15+Math.random()*25}%;width:${Math.random()*22+8}px;height:${Math.random()*22+8}px;border-radius:50%;background:rgba(${200+Math.random()*55|0},${200+Math.random()*55|0},${200+Math.random()*55|0},.4);pointer-events:none;z-index:25;animation:particlePuff .9s ease-out forwards;`;
+      document.body.appendChild(p);setTimeout(()=>p.remove(),1000);
+    },i*35);
+  }
+  // Smoke from candles
+  [[35,22],[48,18],[62,22]].forEach((xp)=>createSmoke(xp[0],xp[1]));
+  setTimeout(()=>{
+    ['flame1','flame2','flame3'].forEach(id=>{
+      const el=document.getElementById(id);if(el) el.style.display='none';
+    });
+    setTimeout(()=>playHappyBirthday(),300);
+    setTimeout(()=>document.getElementById('bday-title').classList.add('show'),500);
+    setTimeout(()=>{document.getElementById('next-btn').classList.add('show');spawnSparkles();},1600);
+  },600);
+}
+
+function createSmoke(xPct,yTop){
+  const scene=document.getElementById('scene-cake');
+  for(let i=0;i<10;i++){
+    setTimeout(()=>{
+      const s=document.createElement('div');
+      s.style.cssText=`position:absolute;left:${xPct+Math.random()*3-1.5}%;top:${yTop+i*2}%;width:${8+i*3}px;height:${8+i*3}px;border-radius:50%;background:rgba(160,160,160,${.4-i*.035});pointer-events:none;animation:smokeRise ${.55+i*.08}s ease-out forwards;`;
+      scene.appendChild(s);setTimeout(()=>s.remove(),1600);
+    },i*55);
+  }
+}
+
+function startMiniSnake(){
+  const mc=document.getElementById('mini-snake-canvas');
+  mc.width=window.innerWidth;mc.height=window.innerHeight;
+  const mctx=mc.getContext('2d');
+  const cx=window.innerWidth/2,cy=window.innerHeight/2-15;
+  const rx=190,ry=95;
+  let angle=0;const mSegs=[];const mN=26;
+  for(let i=0;i<mN;i++) mSegs.push({x:cx+Math.cos(-i*.2)*rx,y:cy+Math.sin(-i*.2)*ry});
+  function drawMini(){
+    mctx.clearRect(0,0,mc.width,mc.height);
+    angle+=.02;
+    for(let i=0;i<mN;i++){const a=angle-i*.2;mSegs[i].x=cx+Math.cos(a)*rx;mSegs[i].y=cy+Math.sin(a)*ry;}
+    for(let i=mN-1;i>0;i--){
+      const t=i/mN;const thick=lerp(16,5,t);
+      mctx.beginPath();mctx.moveTo(mSegs[i].x,mSegs[i].y);mctx.lineTo(mSegs[i-1].x,mSegs[i-1].y);
+      const gr=mctx.createLinearGradient(mSegs[i].x,mSegs[i].y-thick,mSegs[i].x,mSegs[i].y+thick);
+      gr.addColorStop(0,`rgba(129,199,132,${1-t*.3})`);gr.addColorStop(1,`rgba(46,125,50,${1-t*.3})`);
+      mctx.strokeStyle=gr;mctx.lineWidth=thick;mctx.lineCap='round';mctx.stroke();
+      mctx.strokeStyle=`rgba(200,255,200,${.2-t*.15})`;mctx.lineWidth=thick*.3;
+      mctx.beginPath();mctx.moveTo(mSegs[i].x,mSegs[i].y-thick*.3);mctx.lineTo(mSegs[i-1].x,mSegs[i-1].y-thick*.3);mctx.stroke();
+    }
+    mctx.save();mctx.translate(mSegs[0].x,mSegs[0].y);
+    const ha=Math.atan2(mSegs[0].y-mSegs[1].y,mSegs[0].x-mSegs[1].x);mctx.rotate(ha);
+    mctx.fillStyle='#2E7D32';mctx.beginPath();mctx.ellipse(0,0,12,8.5,0,0,Math.PI*2);mctx.fill();
+    mctx.fillStyle='rgba(200,255,200,.35)';mctx.beginPath();mctx.ellipse(0,-3,9,4,0,0,Math.PI*2);mctx.fill();
+    mctx.fillStyle='white';mctx.beginPath();mctx.arc(5.5,-3,3,0,Math.PI*2);mctx.fill();
+    mctx.fillStyle='#111';mctx.beginPath();mctx.arc(6.2,-3,1.5,0,Math.PI*2);mctx.fill();
+    mctx.restore();
+    requestAnimationFrame(drawMini);
+  }
+  drawMini();
+}
+
+function spawnSparkles(){
+  const scene=document.getElementById('scene-cake');
+  const emojis=['🌸','⭐','✨','💫','🌟','💕','🎉','🎊','🎈','🎁'];
+  for(let i=0;i<14;i++){
+    setTimeout(()=>{
+      const s=document.createElement('div');s.className='sparkle';
+      s.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      s.style.cssText=`left:${Math.random()*90+5}%;bottom:${Math.random()*35+5}%;animation-delay:${Math.random()*2}s;animation-duration:${Math.random()*2+3}s;`;
+      scene.appendChild(s);setTimeout(()=>s.remove(),6000);
+    },i*250);
+  }
+  setTimeout(spawnSparkles,5000);
+}
+
+// ---- GATE SNAKE ----
+function startGatesSnake(){
+  const gc=document.getElementById('gates-snake-canvas');
+  gc.width=window.innerWidth;gc.height=window.innerHeight;
+  const gctx=gc.getContext('2d');
+  const segs=[];const N=45;
+  let ax=-100,speed=3.2;
+  for(let i=0;i<N;i++) segs.push({x:ax-i*22,y:window.innerHeight*.78});
+  function drawG(){
+    gctx.clearRect(0,0,gc.width,gc.height);
+    ax+=speed;
+    const ay=window.innerHeight*.78+Math.sin(ax*.009)*75+Math.cos(ax*.018)*30;
+    if(ax>gc.width+200){ax=-100;}
+    segs[0].x=ax;segs[0].y=ay;
+    for(let i=1;i<N;i++){
+      const dx=segs[i-1].x-segs[i].x,dy=segs[i-1].y-segs[i].y;
+      if(Math.hypot(dx,dy)>22){segs[i].x+=dx*.4;segs[i].y+=dy*.4;}
+    }
+    for(let i=N-1;i>0;i--){
+      const t=i/N;const thick=lerp(20,4,t);
+      gctx.beginPath();gctx.moveTo(segs[i].x,segs[i].y);gctx.lineTo(segs[i-1].x,segs[i-1].y);
+      const gr=gctx.createLinearGradient(segs[i].x,segs[i].y-thick,segs[i].x,segs[i].y+thick);
+      gr.addColorStop(0,`rgba(129,199,132,${.38-t*.1})`);gr.addColorStop(1,`rgba(27,94,32,${.38-t*.1})`);
+      gctx.strokeStyle=gr;gctx.lineWidth=thick;gctx.lineCap='round';gctx.stroke();
+      gctx.strokeStyle=`rgba(200,255,200,${.15-t*.08})`;gctx.lineWidth=thick*.3;
+      gctx.beginPath();gctx.moveTo(segs[i].x,segs[i].y-thick*.3);gctx.lineTo(segs[i-1].x,segs[i-1].y-thick*.3);gctx.stroke();
+      if(i%7===0){
+        gctx.beginPath();gctx.arc(segs[i].x,segs[i].y,thick*.35,0,Math.PI*2);
+        gctx.fillStyle=`rgba(100,180,100,${.15-t*.08})`;gctx.fill();
+      }
+    }
+    gctx.save();gctx.translate(segs[0].x,segs[0].y);
+    const ha=Math.atan2(segs[0].y-segs[1].y,segs[0].x-segs[1].x);gctx.rotate(ha);
+    gctx.fillStyle='rgba(46,125,50,.55)';gctx.beginPath();gctx.ellipse(0,0,13,9.5,0,0,Math.PI*2);gctx.fill();
+    gctx.fillStyle='rgba(200,255,200,.22)';gctx.beginPath();gctx.ellipse(0,-3,10,4.5,0,0,Math.PI*2);gctx.fill();
+    gctx.fillStyle='rgba(255,255,255,.5)';gctx.beginPath();gctx.arc(5,-3,2.5,0,Math.PI*2);gctx.fill();
+    gctx.fillStyle='rgba(0,0,0,.4)';gctx.beginPath();gctx.arc(5.5,-3,1.3,0,Math.PI*2);gctx.fill();
+    gctx.restore();
+    requestAnimationFrame(drawG);
+  }
+  drawG();
+}
+
+function goToGates(){
+  const t=document.getElementById('transition');
+  t.classList.add('flash');
+  setTimeout(()=>{
+    document.getElementById('scene-cake').classList.remove('active');
+    document.getElementById('scene-gates').classList.add('active');
+    t.classList.remove('flash');
+    startGatesSnake();
+  },500);
+}
+
+// ---- PASSWORDS ----
+const passwords={1:'best friend',2:'akshi',3:'31 jan'};
+const modalContents={
+  1:{title:'🌟 Gate of Friendship — Unlocked! 🌟',text:`<span class="modal-emoji">🌸💕🌸</span><p> Happyy bdayyy MOTTee socha iss baar kuch alg krte to coder bn gya iss baar</p><p>to tarref to jyada kr ni rha na mein iss baar kyunki bhut kr li ab tu bhut jyada udd rhi or nkhre bhi bdh rhe  </p><p> Baaki Happy Birthdayy Motte . YE saal starting tere liye bhut muskil lgra jo krrhi bo dhng se ho ni rha or koi kaam ni pr Hojayega krti reh piche dekh or ab dekh to terko lg jayega pta ki ab thik hai....  🌟</p><p> IK jyada bddi bddi fenkra pr terko lgta aage tere sath khrab hoga pr fir jb hota to acha hee hota or Ab to 21 saal ki hogyi ab aage se aage terko or lgta hee jaayeaga pr jyada tension ni lene ka vrna jo do baal bche hain bo bhi ni bchenge ✨</p><p><strong> Happy Birthday, BESTie 🎂🎉</strong></p><span class="modal-emoji">💖</span>`},
+  2:{title:'⚡ Gate of Memories — Unlocked! ⚡',text:`<span class="modal-emoji">😂🤜🤛😂</span><p>Haan haan...Tu Akshi — "jyada ladne wali"  Tu Ladti or ab to ptani kon se janam ki dushmani nikalne pe aagyi hai jo hr din itne pnge kre jaari .....Ldaaku bnri </p><p> Or jyada akdu bnri Motti khin ki pr chl ye to mein thik krdeta pnga vrna tu to baat na kre😁 chill mjaak mjaak mein boldeta apun to uk </p><p> Dosti aise chli rhe ldti to tu rhegi pr chlo kya krein terse kon jeet skta 😒😒❤️</p><p> Btati rha kr apna sukh dukh (Jo mein deta bo bhi😏) 🫂</p><p><strong> or baaki Janamdin mubarak Akshi! 🎊</strong></p><span class="modal-emoji">✨🌈✨</span>`},
+  3:{title:'💕 Gate of Bond — Unlocked! 💕',text:`<span class="modal-emoji">🗓️🌸🗓️</span><p>31 January..Nhi hoga yaad..pr merko yaad hai . Woh din jab hamari dosti shuru hui! uss din tera naam naagin pdda or aaj dekh kitne saare naam rkh diye hain meine Naagin,Bhallu, Butki ,bandri , Bevdi ,Bauni ,Bandri, Bbuchk,Bhondu, Ldaku,Suar,Chalu khopdi, or Muchon baali Aunty ye abhi yaad aaya aise hee 😂😂hnsi aarhi imagine krke </p><p> Chl ab Party to Bnti hai teri aaj 21 saal ki hogyi khud to thusegi itna sb motti hojayegi thuss thuss kr  🧵</p><p>Baaki ab Har hansi, Mjaak , Game khelna , Chugli Krna , Pnge krna , Chidana tp chlta rhega  , Baaki  — yhii sab yaadein mujhe hamesha sambhal ke rakhni hain. 💫</p><p>Tu sirf ek dost nahi — tu ek yaad hai, tu sirf mitr ni ak acha scha dost hai or last mein tu sirf meri female best friend nhi tu meri male friend hai Muchon baali 😂😂 Good joke  🏠💕</p><p>Aaj tere janamdin par ek hi dua hai — tu hamesha khush rahe, muskurati rahe, aur main hamesha tere saath rahoon! 🎂🌟</p><p><strong>Happy Birthday Akshi — Shiv Bhagwan ❤️teri sb wishes ko Pura krein ! 🌙💖</strong></p><span class="modal-emoji">🎉🎂🎉</span>`}
+};
+
+function checkPassword(g){
+  const inp=document.getElementById(`pwd-${g}`);
+  const val=inp.value.trim().toLowerCase();
+  if(val===passwords[g]){
+    document.getElementById(`gate-card-${g}`).classList.add('unlocked');
+    inp.style.borderColor='#4CAF50';inp.style.boxShadow='0 0 20px rgba(76,175,80,.8)';
+    shootConfetti();setTimeout(()=>openModal(g),700);
+  } else {
+    inp.classList.add('wrong');setTimeout(()=>inp.classList.remove('wrong'),500);
+    inp.value='';inp.placeholder='Try again... 💭';
+  }
+}
+
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Enter'){
+    for(let i=1;i<=3;i++){
+      if(document.activeElement===document.getElementById(`pwd-${i}`)) checkPassword(i);
+    }
+  }
+});
+
+function openModal(g){
+  const c=modalContents[g];
+  document.getElementById('modal-title').innerHTML=c.title;
+  document.getElementById('modal-text').innerHTML=c.text;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+
+function shootConfetti(){
+  const cols=['#FF69B4','#FFD700','#FF1493','#4CAF50','#87CEEB','#FF6B6B','#98FB98','#DDA0DD','#FFA500','#FF4500'];
+  for(let i=0;i<80;i++){
+    setTimeout(()=>{
+      const c=document.createElement('div');c.className='confetti-piece';
+      c.style.cssText=`left:${Math.random()*100}vw;background:${cols[Math.floor(Math.random()*cols.length)]};width:${Math.random()*11+5}px;height:${Math.random()*11+5}px;border-radius:${Math.random()>.5?'50%':'3px'};animation-duration:${Math.random()*2.2+2}s;animation-delay:${Math.random()*.5}s;`;
+      document.body.appendChild(c);setTimeout(()=>c.remove(),5000);
+    },i*22);
+  }
+}
+
+window.addEventListener('resize',()=>{
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const mc=document.getElementById('mini-snake-canvas');
+  if(mc){mc.width=window.innerWidth;mc.height=window.innerHeight;}
+});
+</script>
+</body>
+</html>
